@@ -93,6 +93,6 @@
 
     * LinkedListTabulatedFunction.java
 
-    * TabulatedFunctionImpl.java
+    * TabulatedFunction.java
 2. Класс `Main` вне пакета `functions`. 
 3. Отчет в формате `.pdf`, в котором описано выполнение работы.
