@@ -1,5 +1,7 @@
 package functions;
 
+
+
 public class FunctionPoint {
     private double x;
     private double y;

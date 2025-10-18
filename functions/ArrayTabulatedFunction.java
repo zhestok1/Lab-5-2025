@@ -1,8 +1,15 @@
 package functions;
 
-public class ArrayTabulatedFunction implements TabulatedFunction {
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
+public class ArrayTabulatedFunction implements TabulatedFunction, Externalizable {
     private FunctionPoint[] massiveOfPoints;
     private int amountOfElements;
+
+    public ArrayTabulatedFunction() {}
 
     /**
      * Создает табличную функцию с равномерно распределенными точками
@@ -49,6 +56,28 @@ public class ArrayTabulatedFunction implements TabulatedFunction {
             double x = leftX + i * distance;
             this.massiveOfPoints[i] = new FunctionPoint(x, values[i]);
         }
+    }
+
+    /**
+     * Создает табличную функцию с равномерно распределенными точками и заданными значениями функции
+     * @param massiveOfPoints массив точек
+     */
+    public ArrayTabulatedFunction(FunctionPoint[] massiveOfPoints) throws IllegalArgumentException, InappropriateFunctionPointException {
+        this.amountOfElements = massiveOfPoints.length;
+        if (amountOfElements < 2)
+            throw new IllegalArgumentException("Massive length must be greater than 2!");
+
+        for (int i = 1; i < amountOfElements; i++) {
+            if (massiveOfPoints[i].getX() < massiveOfPoints[i-1].getX()) {
+                throw new InappropriateFunctionPointException();
+            }
+        }
+
+        this.massiveOfPoints = new FunctionPoint[amountOfElements];
+        for (int i = 0; i < amountOfElements; i++) {
+            this.massiveOfPoints[i] = new FunctionPoint(massiveOfPoints[i]);
+        }
+
     }
 
     /**
@@ -227,8 +256,9 @@ public class ArrayTabulatedFunction implements TabulatedFunction {
             pos++;
         }
 
-        // Проверяем на дубликат
-        if (pos < amountOfElements && massiveOfPoints[pos].getX() == point.getX()) {
+        // Проверка на корректность вставки
+        if ((pos > 0 && Math.abs(massiveOfPoints[pos-1].getX() - point.getX()) < 1e-10) ||
+                (pos < amountOfElements && Math.abs(massiveOfPoints[pos].getX() - point.getX()) < 1e-10)) {
             throw new InappropriateFunctionPointException();
         }
 
@@ -240,5 +270,38 @@ public class ArrayTabulatedFunction implements TabulatedFunction {
         // Вставляем новую точку
         massiveOfPoints[pos] = new FunctionPoint(point.getX(), point.getY());
         amountOfElements++;
+    }
+
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        // Сериализуем только данные, а не всю структуру массива
+        out.writeInt(amountOfElements);
+
+        // Сохраняем координаты X и Y в отдельные массивы
+        double[] xValues = new double[amountOfElements];
+        double[] yValues = new double[amountOfElements];
+
+        for (int i = 0; i < amountOfElements; i++) {
+            xValues[i] = massiveOfPoints[i].getX();
+            yValues[i] = massiveOfPoints[i].getY();
+        }
+
+        out.writeObject(xValues);
+        out.writeObject(yValues);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        // Восстанавливаем данные
+        amountOfElements = in.readInt();
+        double[] xValues = (double[]) in.readObject();
+        double[] yValues = (double[]) in.readObject();
+
+        // Восстанавливаем массив точек
+        massiveOfPoints = new FunctionPoint[amountOfElements];
+        for (int i = 0; i < amountOfElements; i++) {
+            massiveOfPoints[i] = new FunctionPoint(xValues[i], yValues[i]);
+        }
     }
 }

@@ -1,6 +1,12 @@
 package functions;
 
-public class LinkedListTabulatedFunction implements TabulatedFunction {
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
+public class LinkedListTabulatedFunction implements TabulatedFunction, Externalizable {
+
 
     /**
      * Вложенный класс элемента связного списка.
@@ -63,7 +69,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
         }
     }
 
-    private FunctionNode head = new FunctionNode(null);
+    private transient FunctionNode head = new FunctionNode(null);
 
     {
         head.setPrev(head);
@@ -71,6 +77,11 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
     }
 
     private int count;
+
+    /**
+     * Конструктор по умолчанию
+     */
+    public LinkedListTabulatedFunction() {}
 
     /**
      * Добавляет новый узел в конец списка.
@@ -184,6 +195,12 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
         return targetNode;
     }
 
+    /**
+     * @param leftX
+     * @param rightX
+     * @param pointsCount
+     * @throws IllegalArgumentException
+     */
     public LinkedListTabulatedFunction(double leftX, double rightX, int pointsCount)
             throws IllegalArgumentException {
         if (leftX >= rightX) {
@@ -200,6 +217,12 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
         }
     }
 
+    /**
+     * @param leftX
+     * @param rightX
+     * @param values
+     * @throws IllegalArgumentException
+     */
     public LinkedListTabulatedFunction(double leftX, double rightX, double[] values)
             throws IllegalArgumentException {
         if (leftX >= rightX) {
@@ -217,6 +240,27 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
         }
     }
 
+
+    /**
+     * @param points массив точек
+     * @throws IllegalArgumentException исключение массива меньше 2
+     * @throws InappropriateFunctionPointException исключение некорректно заданных значений точек в массиве
+     */
+    public LinkedListTabulatedFunction(FunctionPoint[] points)
+            throws IllegalArgumentException, InappropriateFunctionPointException {
+        if (points == null) throw new IllegalArgumentException("Points array cannot be null");
+        if (points.length < 2) throw new IllegalArgumentException("Massive must be greater than 2!");
+
+        for (int i = 1; i < points.length; i++) {
+            if (points[i].getX() <= points[i-1].getX()) {
+                throw new InappropriateFunctionPointException();
+            }
+        }
+
+        for (int i = 0; i < points.length; i++) {
+            addNodeToTail(new FunctionPoint(points[i]));
+        }
+    }
     public double getLeftDomainBorder() {
         return head.getNext().getPoint().getX(); // Прямой доступ к первому элементу через голову списка
     }
@@ -350,7 +394,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
         deleteNodeByIndex(index);
     }
 
-    public void addPoint(FunctionPoint point) {
+    public void addPoint(FunctionPoint point) throws InappropriateFunctionPointException {
         if (point == null) {
             throw new IllegalArgumentException("Point cannot be null");
         }
@@ -359,7 +403,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
         FunctionNode current = head.getNext();
         while (current != head) {
             if (Math.abs(current.getPoint().getX() - point.getX()) < 1e-10) {
-                throw new IllegalArgumentException("Point X=" + point.getX() + " is being");
+                throw new InappropriateFunctionPointException();
             }
             current = current.getNext();
         }
@@ -374,5 +418,41 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
         }
 
         addNodeByIndex(insertIndex, point);
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(count);
+
+        // Сохраняем все точки в массивы
+        double[] xValues = new double[count];
+        double[] yValues = new double[count];
+
+        FunctionNode current = head.getNext();
+        for (int i = 0; i < count; i++) {
+            xValues[i] = current.getPoint().getX();
+            yValues[i] = current.getPoint().getY();
+            current = current.getNext();
+        }
+
+        out.writeObject(xValues);
+        out.writeObject(yValues);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        // Восстанавливаем данные и перестраиваем связный список
+        count = in.readInt();
+        double[] xValues = (double[]) in.readObject();
+        double[] yValues = (double[]) in.readObject();
+
+        // Перестраиваем связный список
+        head = new FunctionNode(null);
+        head.setPrev(head);
+        head.setNext(head);
+
+        for (int i = 0; i < count; i++) {
+            addNodeToTail(new FunctionPoint(xValues[i], yValues[i]));
+        }
     }
 }

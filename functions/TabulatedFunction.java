@@ -1,25 +1,8 @@
 package functions;
 
-public interface TabulatedFunction {
 
-    /**
-     * Возвращает левую границу области определения функции
-     * @return значение левой границы области определения
-     */
-    double getLeftDomainBorder();
 
-    /**
-     * Возвращает правую границу области определения функции
-     * @return значение правой границы области определения
-     */
-    double getRightDomainBorder();
-
-    /**
-     * Вычисляет значение функции в заданной точке с помощью линейной интерполяции
-     * @param x координата, в которой вычисляется значение функции
-     * @return значение функции в точке x или Double.NaN, если x вне области определения
-     */
-    double getFunctionValue(double x);
+public interface TabulatedFunction extends Function {
 
     /**
      * Возвращает количество точек в табличной функции
