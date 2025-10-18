@@ -143,7 +143,7 @@ public class Main {
         TabulatedFunction tabulatedLnOfExp = TabulatedFunctions.tabulate(lnOfExp, 0, 10, 11);
 
         // Сериализуем в файл
-        String filename = "ln_of_exp_serialized.txt";
+        String filename = "ln_of_exp_serialized.txtcd ";
         try (FileOutputStream fileOut = new FileOutputStream(filename);
              ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
             out.writeObject(tabulatedLnOfExp);
