@@ -2,6 +2,7 @@ package functions.meta;
 
 import functions.Function;
 
+
 public class Sum implements Function {
 
     private Function firstFunc;
@@ -33,12 +34,13 @@ public class Sum implements Function {
     public double getRightDomainBorder() {
 
         double rightBorder1 = firstFunc.getRightDomainBorder();
-        double rightBorder2 = firstFunc.getRightDomainBorder();
+        double rightBorder2 = secondFunc.getRightDomainBorder();
 
         return Math.min(rightBorder1, rightBorder2);
     }
 
     @Override
+    // Результат - пересечение двух областей
     public double getFunctionValue(double x) {
         // Проверяем, что x принадлежит пересечению областей определения
         double leftBorder = getLeftDomainBorder();

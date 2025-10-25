@@ -32,6 +32,7 @@ public class Composition implements Function {
     }
 
     @Override
+    // Применение к одной функции результата другой
     public double getFunctionValue(double x) {
 
         double secondVal = secondFunc.getFunctionValue(x);

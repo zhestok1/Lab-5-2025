@@ -4,11 +4,11 @@ import functions.Function;
 
 public class Log implements Function {
 
-    private double logBase;
+    private double logBase; // Основание логарифма
 
     /**
      * Конструктор класса Log
-     * @param logBase основание лоагрифма
+     * @param logBase основание логарифма
      * @throws IllegalArgumentException некорректное основание логарифма
      */
     public Log(double logBase) throws IllegalArgumentException {

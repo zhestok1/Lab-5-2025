@@ -5,7 +5,8 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-public class LinkedListTabulatedFunction implements TabulatedFunction, Externalizable {
+
+public class LinkedListTabulatedFunction implements TabulatedFunction, Externalizable, Cloneable {
 
 
     /**
@@ -454,5 +455,73 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Externali
         for (int i = 0; i < count; i++) {
             addNodeToTail(new FunctionPoint(xValues[i], yValues[i]));
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        for (int i = 0; i < this.getPointsCount(); i++) {
+            sb.append(this.getNodeByIndex(i).toString());
+            if (i < this.getPointsCount() - 1) {
+                sb.append(", ");
+            }
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || !(obj instanceof TabulatedFunction)) return false;
+
+        // Общие проверки для любого TabulatedFunction
+        if (this.getPointsCount() != ((TabulatedFunction) obj).getPointsCount()) return false;
+
+        // Оптимизация для того же класса
+        if (obj instanceof LinkedListTabulatedFunction) {
+            for (int i = 0; i < getPointsCount(); i++) {
+                if (!(this.getNodeByIndex(i).equals(((LinkedListTabulatedFunction) obj).getNodeByIndex(i))));
+                return false;
+            }
+        } else {
+            // Общий случай для других реализаций TabulatedFunction
+            for (int i = 0; i < this.getPointsCount(); i++) {
+                if (!this.getPoint(i).equals(((TabulatedFunction) obj).getPoint(i)))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        // Реализация хэша для списка
+        int hash = count;
+        FunctionNode curr = head.getNext();
+        while (curr != head) {
+            hash ^= curr.getPoint().hashCode(); // Ксорим каждый хэш от каждой точки
+            curr = curr.getNext();
+        }
+        return hash;
+    }
+
+    @Override
+    public Object clone()  {
+        FunctionPoint[] massOfPoints = new FunctionPoint[this.getPointsCount()];
+        FunctionNode curr = head.getNext();
+
+        for (int i = 0; curr != head; i++) {
+            massOfPoints[i] = curr.getPoint();
+            curr = curr.getNext();
+        }
+
+        try {
+            return new LinkedListTabulatedFunction(massOfPoints);
+        } catch (InappropriateFunctionPointException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

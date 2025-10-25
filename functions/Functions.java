@@ -63,8 +63,8 @@ public class Functions {
 
     /**
      * Статический метод создания объекта типа Composition
-     * @param f1
-     * @param f2
+     * @param f1 функция 1
+     * @param f2 функция 2
      * @return объект
      */
     public static Function composition(Function f1, Function f2) {

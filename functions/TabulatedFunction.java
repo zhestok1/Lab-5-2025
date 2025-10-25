@@ -64,5 +64,11 @@ public interface TabulatedFunction extends Function {
      * @param point новая точка
      */
     void addPoint(FunctionPoint point) throws InappropriateFunctionPointException;
+
+    /**
+     * Клонирует объект
+     * @return клон объекта
+     */
+    public Object clone();
 }
 

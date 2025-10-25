@@ -4,8 +4,10 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Arrays;
+import java.util.Objects;
 
-public class ArrayTabulatedFunction implements TabulatedFunction, Externalizable {
+public class ArrayTabulatedFunction implements TabulatedFunction, Externalizable, Cloneable {
     private FunctionPoint[] massiveOfPoints;
     private int amountOfElements;
 
@@ -302,6 +304,58 @@ public class ArrayTabulatedFunction implements TabulatedFunction, Externalizable
         massiveOfPoints = new FunctionPoint[amountOfElements];
         for (int i = 0; i < amountOfElements; i++) {
             massiveOfPoints[i] = new FunctionPoint(xValues[i], yValues[i]);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(); // mutable class который позволяет работать со строками не создавая новые объекты
+        sb.append("{");
+        for (int i = 0; i < this.amountOfElements; i++) {
+            sb.append(massiveOfPoints[i].toString());
+            if (i < amountOfElements - 1) { // Не ставим запятую после последнего элемента
+                sb.append(", ");
+            }
+        }
+        sb.append("}");
+        return sb.toString(); // Преобразовали наш стрингБилдер в строку
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || !(obj instanceof TabulatedFunction)) return false;
+
+        // Общие проверки для любого TabulatedFunction
+        if (this.getPointsCount() != ((TabulatedFunction) obj).getPointsCount()) return false;
+
+        // Оптимизация для того же класса
+        if (obj instanceof ArrayTabulatedFunction) {
+            for (int i = 0; i < amountOfElements; i++) {
+                if (!this.massiveOfPoints[i].equals(((ArrayTabulatedFunction) obj).massiveOfPoints[i]))
+                    return false;
+            }
+        } else {
+            // Общий случай для других реализаций TabulatedFunction
+            for (int i = 0; i < this.getPointsCount(); i++) {
+                if (!this.getPoint(i).equals(((TabulatedFunction) obj).getPoint(i)))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash((Object) massiveOfPoints); // Реализация хэша
+    }
+
+    @Override
+    public Object clone() {
+        try {
+            return new ArrayTabulatedFunction(this.massiveOfPoints.clone()); // Клонируем каждую точку отдельно
+        } catch (InappropriateFunctionPointException e) {
+            throw new RuntimeException(e);
         }
     }
 }

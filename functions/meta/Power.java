@@ -9,8 +9,8 @@ public class Power implements Function{
 
     /**
      * Конструктор класса Power
-     * @param funcBase
-     * @param power
+     * @param funcBase основание функции
+     * @param power степень
      */
     public Power(Function funcBase, double power) {
         if (funcBase == null) throw new IllegalArgumentException("Function cannot be a null!");
@@ -30,6 +30,7 @@ public class Power implements Function{
     }
 
     @Override
+    // Объекты - функции степени другой функции
     public double getFunctionValue(double x) {
         return Math.pow(funcBase.getFunctionValue(x), power);
     }

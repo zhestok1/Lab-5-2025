@@ -1,7 +1,5 @@
 package functions;
 
-
-
 public class FunctionPoint {
     private double x;
     private double y;
@@ -37,5 +35,30 @@ public class FunctionPoint {
 
     public void setY(double y) {
         this.y = y;
+    }
+
+    @Override
+    public String toString() {
+        return "(" + this.x + "; " + this.y + ")";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true; // Возвращаем true, если у нас тот же объект (т.к. проверяем ссылки)
+        if (obj == null || this.getClass() != obj.getClass()) return false; // Разные типы => разные объекты
+
+        return Double.compare(this.x, ((FunctionPoint) obj).x) == 0 // compare возвращает нуль, если координаты равны
+                && Double.compare(this.y, ((FunctionPoint) obj).y) == 0; // в противном случае вернёт другую константу
+
+    }
+
+    @Override
+    public int hashCode() {
+        return (Double.hashCode(this.x) ^ Double.hashCode(this.y)); // бит = 1, если разные, =0, если одинаковые
+    }
+
+    @Override
+    public Object clone() {
+        return new FunctionPoint(this.x, this.y); // Просто клонируем объект
     }
 }

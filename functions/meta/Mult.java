@@ -39,6 +39,7 @@ public class Mult implements Function {
     }
 
     @Override
+    // Объекты - произведение первой и второй
     public double getFunctionValue(double x) {
         // Проверяем, что x принадлежит пересечению областей определения
         double leftBorder = getLeftDomainBorder();
