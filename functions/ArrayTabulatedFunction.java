@@ -345,17 +345,26 @@ public class ArrayTabulatedFunction implements TabulatedFunction {
         return true;
     }
 
+
     @Override
     public int hashCode() {
-        return Objects.hash((Object) massiveOfPoints); // Реализация хэша
+        int hash = 17;
+        for (int i = 0; i < amountOfElements; i++) {
+            hash = 31 * hash + massiveOfPoints[i].hashCode(); // Копия джавовской реализации
+        }
+        return hash;
     }
 
     @Override
     public Object clone() {
+        FunctionPoint[] clonedPoints = new FunctionPoint[this.amountOfElements];
+        for (int i = 0; i < this.amountOfElements; i++) {
+            clonedPoints[i] = (FunctionPoint) this.massiveOfPoints[i].clone();
+        }
         try {
-            return new ArrayTabulatedFunction(this.massiveOfPoints.clone()); // Клонируем каждую точку отдельно
+            return new ArrayTabulatedFunction(clonedPoints);
         } catch (InappropriateFunctionPointException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Clone failed", e);
         }
     }
 }

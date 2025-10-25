@@ -54,7 +54,7 @@ public class FunctionPoint {
 
     @Override
     public int hashCode() {
-        return (Double.hashCode(this.x) ^ Double.hashCode(this.y)); // бит = 1, если разные, =0, если одинаковые
+        return Double.hashCode(x) ^ Double.hashCode(y);
     }
 
     @Override

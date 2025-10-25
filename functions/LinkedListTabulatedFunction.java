@@ -462,7 +462,9 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         for (int i = 0; i < this.getPointsCount(); i++) {
-            sb.append(this.getNodeByIndex(i).toString());
+            // Получаем точку из узла
+            FunctionPoint point = this.getNodeByIndex(i).getPoint();
+            sb.append(point.toString());
             if (i < this.getPointsCount() - 1) {
                 sb.append(", ");
             }
@@ -476,17 +478,14 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
         if (this == obj) return true;
         if (obj == null || !(obj instanceof TabulatedFunction)) return false;
 
-        // Общие проверки для любого TabulatedFunction
         if (this.getPointsCount() != ((TabulatedFunction) obj).getPointsCount()) return false;
 
-        // Оптимизация для того же класса
         if (obj instanceof LinkedListTabulatedFunction) {
             for (int i = 0; i < getPointsCount(); i++) {
-                if (!(this.getNodeByIndex(i).equals(((LinkedListTabulatedFunction) obj).getNodeByIndex(i))));
-                return false;
+                if (!this.getPoint(i).equals(((LinkedListTabulatedFunction) obj).getPoint(i)))
+                    return false;
             }
         } else {
-            // Общий случай для других реализаций TabulatedFunction
             for (int i = 0; i < this.getPointsCount(); i++) {
                 if (!this.getPoint(i).equals(((TabulatedFunction) obj).getPoint(i)))
                     return false;
@@ -497,31 +496,30 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
 
     @Override
     public int hashCode() {
-        // Реализация хэша для списка
-        int hash = count;
+        int hash = 17;
         FunctionNode curr = head.getNext();
         while (curr != head) {
-            hash ^= curr.getPoint().hashCode(); // Ксорим каждый хэш от каждой точки
+            hash = 31 * hash + curr.getPoint().hashCode();
             curr = curr.getNext();
         }
         return hash;
     }
 
     @Override
-    public Object clone()  {
+    public Object clone() {
         FunctionPoint[] massOfPoints = new FunctionPoint[this.getPointsCount()];
         FunctionNode curr = head.getNext();
 
         for (int i = 0; curr != head; i++) {
-            massOfPoints[i] = curr.getPoint();
+            FunctionPoint original = curr.getPoint();
+            massOfPoints[i] = new FunctionPoint(original.getX(), original.getY());
             curr = curr.getNext();
         }
 
         try {
             return new LinkedListTabulatedFunction(massOfPoints);
         } catch (InappropriateFunctionPointException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Clone failed", e);
         }
-
     }
 }

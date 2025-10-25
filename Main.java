@@ -37,9 +37,10 @@ public class Main {
 
         // 4. Тест изменения хеша
         System.out.println("Изменение хеша:");
-        int oldHash = attf1.hashCode();
-        attf1.getPoint(1).setY(1.001); // Меняем точку
-        int newHash = attf1.hashCode();
+        int oldHash = lltf1.hashCode();
+        FunctionPoint point = new FunctionPoint(1, 999);
+        lltf1.setPoint(1, point);// Меняем точку в lltf1
+        int newHash = lltf1.hashCode();
         System.out.println("Старый хеш: " + oldHash + ", Новый хеш: " + newHash);
         System.out.println("Хеш изменился: " + (oldHash != newHash));
         System.out.println();
