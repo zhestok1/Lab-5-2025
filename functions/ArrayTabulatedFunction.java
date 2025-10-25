@@ -7,7 +7,7 @@ import java.io.ObjectOutput;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class ArrayTabulatedFunction implements TabulatedFunction, Externalizable, Cloneable {
+public class ArrayTabulatedFunction implements TabulatedFunction {
     private FunctionPoint[] massiveOfPoints;
     private int amountOfElements;
 

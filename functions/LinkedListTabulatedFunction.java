@@ -6,7 +6,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 
-public class LinkedListTabulatedFunction implements TabulatedFunction, Externalizable, Cloneable {
+public class LinkedListTabulatedFunction implements TabulatedFunction {
 
 
     /**

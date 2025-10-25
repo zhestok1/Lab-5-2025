@@ -1,8 +1,9 @@
 package functions;
 
 
+import java.io.Externalizable;
 
-public interface TabulatedFunction extends Function {
+public interface TabulatedFunction extends Function, Cloneable, Externalizable {
 
     /**
      * Возвращает количество точек в табличной функции
